@@ -115,17 +115,21 @@ public class Handler {
         byte b2 = bus.read(addr + 4);
         byte b3 = bus.read(addr + 5);
         ldAddr = ((b0 & 0xFF) << 24)  | ((b1 & 0xFF) << 16) | ((b2 & 0xFF) << 8) | (b3 & 0xFF);
+        if (ldAddr + 4 >= bus.finalAddr()) {
+            registers[reg].loadValue(bus.read(ldAddr));
+            PC.value += 6;
+        } else {
+            byte[] bytes = new byte[4];
+            for (int i = 0; i < 4; i++) {
+                bytes[i] = bus.read(ldAddr + i);
+            }
 
-        byte[] bytes = new byte[4];
-        for (int i = 0; i < 4; i++) {
-            bytes[i] = bus.read(ldAddr + i);
+            int ldVal = Helpers.BigEndian(bytes);
+            //System.out.println(ldVal);
+
+            registers[reg].loadValue(ldVal);
+            PC.value += 6;
         }
-
-        int ldVal = Helpers.BigEndian(bytes);
-        //System.out.println(ldVal);
-
-        registers[reg].loadValue(ldVal);
-        PC.value += 6;
 
     }
 

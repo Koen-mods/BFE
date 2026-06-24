@@ -6,7 +6,7 @@ import com.koen.bfe.instructions.handling.Handler;
 import com.koen.bfe.memory.Bus;
 
 public class CPU {
-    public static Bus bus = new Bus(1000, 1000, 32, 32, 20, 20);
+    public static Bus bus = new Bus(1000, 1000, 32, 32, 53, 36);
     public static Register PC = new Register("PC");
     public static Register CMP_FLG = new Register("CMP_FLG");
     public static Register[] registers = new Register[16];
@@ -20,10 +20,10 @@ public class CPU {
         System.out.println("PC:" + PC.value);
     }
 
-    public static void ExecuteProgram(byte[] program) throws IllegalAccessException {
+    public static void ExecuteProgram(byte[] program) throws IllegalAccessException, InterruptedException {
         bus.loadProgram(program);
         byte nopcode = bus.read(PC.value);
-        System.out.println("PC:"+PC.value+"\nOPCODE:"+nopcode);
+        //System.out.println("PC:"+PC.value+"\nOPCODE:"+nopcode);
         while (PC.getValue() < ((bus.getRomStart() + program.length) - 1)) {
             byte opcode = bus.read(PC.getValue());
             switch (opcode) {

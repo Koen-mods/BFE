@@ -6,15 +6,19 @@ import com.koen.bfe.help.menu.Menu;
 import com.koen.bfe.instructions.handling.Handler;
 import com.koen.bfe.instructions.parsing.CPU;
 import com.koen.bfe.memory.Bus;
+import com.koen.bfe.video.BImg;
 import com.koen.bfe.video.ScreenPanel;
 
+import javax.naming.SizeLimitExceededException;
 import javax.swing.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class Main {
     public static ScreenPanel panel = new ScreenPanel();
 
-    public static void main(String[] args) throws IllegalAccessException, IOException {
+    public static void main(String[] args) throws IllegalAccessException, IOException, SizeLimitExceededException, InterruptedException {
         JFrame frame = new JFrame("Screen");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(panel);
@@ -22,15 +26,22 @@ public class Main {
         frame.setVisible(true);
         CPU cpu = new CPU();
         Bus bus = CPU.getBus();
-        System.out.println("RAM start: 0\nROM start: " + bus.getRomStart());
-        CPU.ExecuteProgram(FileHandling.readFileContents(args[0]));
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                bus.keyboard.keyPressed((byte)e.getKeyChar());
+            }
+        });
+        System.out.println("RAM start: 0\nROM start: " + bus.getRomStart() + "\nVideo start: " + bus.getVideoStart() + "\nText start: " + bus.getTextStart());
+        System.out.println("IO registers start:" + (bus.getTextStart() + bus.getTextSize()));
+        bus.setMode(false);
+        //CPU.ExecuteProgram(FileHandling.readFileContents(args[0]));
         System.out.println(CPU.registers[1].value);
         System.out.println(CPU.registers[2].value);
         System.out.println(bus.read(996));
+        bus.printf(0, "HEY, KOEN HERE, I CAN USE COMMAS NOW");
     }
 }
-
-// TODO, ./instructions/parsing/CPU.java:68:8
 
 /*
 * ~~Memory layout~~ DISCONTINUED

@@ -4,6 +4,7 @@ public class VideoMemory implements MemoryDevice {
     private byte[] pixels;
     private int width;
     private int height;
+    private boolean enabled = false;
 
     public VideoMemory(int width, int height) {
         this.width = width;
@@ -46,5 +47,13 @@ public class VideoMemory implements MemoryDevice {
 
     public byte getPixel(int x, int y) {
         return pixels[x + y * width];
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
