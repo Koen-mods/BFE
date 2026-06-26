@@ -4,13 +4,18 @@ import com.koen.bfe.Main;
 import com.koen.bfe.essentials.Register;
 import com.koen.bfe.instructions.handling.Handler;
 import com.koen.bfe.memory.Bus;
+import com.koen.bfe.memory.InterruptHandling;
 
 public class CPU {
     public static Bus bus = new Bus(1000, 1000, 32, 32, 53, 36);
     public static Register PC = new Register("PC");
     public static Register CMP_FLG = new Register("CMP_FLG");
+    public static Register INT_FLG = new Register("INT_FLG");
+    public static Register IRP = new Register("IRP");
+    public static Register CRF = new Register("CRF");
     public static Register[] registers = new Register[16];
     public static boolean running = true;
+    public static InterruptHandling interruptHandling = new InterruptHandling();
 
     public CPU() {
         for (int i = 1; i <= 16; i++) {
@@ -18,6 +23,7 @@ public class CPU {
         }
 
         PC.value = bus.getRomStart();
+        INT_FLG.loadValue(1);
         System.out.println("PC:" + PC.value);
     }
 
@@ -62,11 +68,17 @@ public class CPU {
                     Handler.handleLoadRegMemptr(PC.getValue());
                 case 17 ->
                     Handler.handleLoadMemptrReg(PC.getValue());
+                case 18 ->
+                    Handler.handleInterruptReturn(PC.getValue());
                 case 99 ->
                     Handler.handleHalt(PC.getValue());
             }
             Main.panel.repaint();
             bus.dm.update();
+            bus.timer.update();
+            if (interruptHandling.hasPending() && INT_FLG.value == 1) {
+                interruptHandling.handleInterrupt(interruptHandling.pendingInterrupts.remove());
+            }
             //Thread.sleep(1000);
             //System.out.println("PC:"+PC.getValue());
         }

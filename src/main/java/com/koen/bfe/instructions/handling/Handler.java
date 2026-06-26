@@ -12,7 +12,7 @@ public class Handler {
     private static Bus bus = CPU.getBus();
 
     public static void handleLoadMem(int addr) throws IllegalAccessException {
-        System.out.println("PC:" +PC.getValue());
+        //System.out.println("PC:" +PC.getValue());
         int ldAddr;
         byte b0 = bus.read(addr + 1);
         byte b1 = bus.read(addr + 2);
@@ -21,15 +21,15 @@ public class Handler {
         ldAddr = ((b0 & 0xFF) << 24)  | ((b1 & 0xFF) << 16) | ((b2 & 0xFF) << 8) | (b3 & 0xFF);
         bus.write(ldAddr, bus.read(addr + 5));
         PC.loadValue(PC.getValue() + 6);
-        System.out.println("PC:"+PC.getValue());
-        System.out.println("added val to addr " + ldAddr + ": " + bus.read(ldAddr));
+        //System.out.println("PC:"+PC.getValue());
+        //System.out.println("added val to addr " + ldAddr + ": " + bus.read(ldAddr));
     }
 
     public static void handleLoadReg(int addr) throws IllegalAccessException {
         int val = Helpers.BigEndian(new byte[]{bus.read(addr+2),bus.read(addr+3),bus.read(addr+4),bus.read(addr+5)});
         registers[bus.read(addr+1)].loadValue(val);
         PC.loadValue(PC.getValue() + 6);
-        System.out.println("PC:"+PC.getValue());
+        //System.out.println("PC:"+PC.getValue());
     }
 
     public static void handleAdd(int addr) throws IllegalAccessException {
@@ -192,9 +192,13 @@ public class Handler {
         PC.value+=3;
     }
 
+    public static void handleInterruptReturn(int addr) {
+        interruptHandling.stateReturn();
+    }
+
     public static void handleHalt(int addr) {
         PC.loadValue(PC.getValue() + 1);
-        System.out.println("halting CPU... (PC: " + PC.getValue() + ")");
+        //System.out.println("halting CPU... (PC: " + PC.getValue() + ")");
     }
 
 }

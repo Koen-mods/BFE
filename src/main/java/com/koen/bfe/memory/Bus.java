@@ -67,7 +67,7 @@ public class Bus {
     }
 
     public void write(int address, byte value) throws IllegalAccessException {
-        System.out.println("Writing to " + address);
+        //System.out.println("Writing to " + address);
         if (address < romStart) {
             ram.write(address, value);
         } else if (address < videoStart) {

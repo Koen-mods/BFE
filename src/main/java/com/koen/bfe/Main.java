@@ -37,8 +37,10 @@ public class Main {
         System.out.println("IO registers start:" + (bus.getTextStart() + bus.getTextSize()) + "\nSyscontrol" + (bus.getTextStart() + bus.getTextSize() + 5));
         bus.setMode(true);
         bootTime = System.currentTimeMillis();
-        //CPU.ExecuteProgram(FileHandling.readFileContents(args[0]));
-        BImg.loadBImg("/home/koen/Documents/scripts/BFE/build/libs/BFE.bin");
+        CPU.ExecuteProgram(FileHandling.readFileContents(args[0]));
+        frame.setVisible(false);
+        frame.remove(panel);
+        System.exit(0);
     }
 }
 
