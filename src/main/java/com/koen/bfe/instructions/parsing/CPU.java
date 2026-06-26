@@ -10,6 +10,7 @@ public class CPU {
     public static Register PC = new Register("PC");
     public static Register CMP_FLG = new Register("CMP_FLG");
     public static Register[] registers = new Register[16];
+    public static boolean running = true;
 
     public CPU() {
         for (int i = 1; i <= 16; i++) {
@@ -24,7 +25,7 @@ public class CPU {
         bus.loadProgram(program);
         byte nopcode = bus.read(PC.value);
         //System.out.println("PC:"+PC.value+"\nOPCODE:"+nopcode);
-        while (PC.getValue() < ((bus.getRomStart() + program.length) - 1)) {
+        while (PC.getValue() < ((bus.getRomStart() + program.length) - 1) && running) {
             byte opcode = bus.read(PC.getValue());
             switch (opcode) {
                 case 1 ->
@@ -65,6 +66,8 @@ public class CPU {
                     Handler.handleHalt(PC.getValue());
             }
             Main.panel.repaint();
+            bus.dm.update();
+            //Thread.sleep(1000);
             //System.out.println("PC:"+PC.getValue());
         }
     }

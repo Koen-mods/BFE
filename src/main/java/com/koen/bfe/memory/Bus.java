@@ -1,7 +1,7 @@
 package com.koen.bfe.memory;
 
 import com.koen.bfe.Main;
-import com.koen.bfe.memory.IO.Keyboard;
+import com.koen.bfe.memory.IO.*;
 
 import javax.naming.SizeLimitExceededException;
 import java.io.IOException;
@@ -16,6 +16,10 @@ public class Bus {
     private int textStart;
     private boolean enabled = false;
     public Keyboard keyboard = new Keyboard();
+    public Timer timer = new Timer();
+    public SysControl sys = new SysControl();
+    public RNG rng = new RNG();
+    public DisplayMode dm = new DisplayMode();
 
     public Bus(int ramSize, int romSize, int videoWidth, int videoHeight, int textWidth, int textHeight) {
         ram = new RAM(ramSize);
@@ -38,10 +42,24 @@ public class Bus {
         } else if (address < (textStart + text.size())) {
             return text.read(address - textStart);
         } else if (address == (textStart + text.size())) {
-            return keyboard.isKeyAvailable();
+            return timer.read(0);
         } else if (address == (textStart + text.size() + 1)) {
+            return timer.read(1);
+        }else if (address == (textStart + text.size() + 2)) {
+            return timer.read(2);
+        }else if (address == (textStart + text.size() + 3)) {
+            return timer.read(3);
+        }else if (address == (textStart + text.size() + 4)) {
+            return rng.read();
+        }else if (address == (textStart + text.size() + 5)) {
+            return sys.read();
+        }else if (address == (textStart + text.size() + 6)) {
+            return dm.read();
+        }else if (address == (textStart + text.size() + 7)) {
+            return keyboard.isKeyAvailable();
+        }else if (address == (textStart + text.size() + 8)) {
             return keyboard.read();
-        } else if (address > (textStart + text.size() + 1)) {
+        } else if (address > (textStart + text.size() + 8)) {
             throw new IllegalAccessException("Address out of bounds, address read: " + address);
         } else {
             throw new IllegalAccessException("Something went wrong trying to read from this address");
@@ -58,8 +76,22 @@ public class Bus {
             video.write(address - videoStart, value);
         } else if (address < (textStart + text.size())) {
             text.write(address - textStart, value);
-        } else if (address <= textStart + text.size() + 1) {
-            throw new IllegalAccessException("Writing to IO registers is illegal");
+        } else if (address == (textStart + text.size())) {
+            throw new IllegalStateException("Timer is read-only");
+        }else if (address == (textStart + text.size() + 1)) {
+            throw new IllegalStateException("Timer is read-only");
+        }else if (address == (textStart + text.size() + 2)) {
+            throw new IllegalStateException("Timer is read-only");
+        }else if (address == (textStart + text.size() + 3)) {
+            throw new IllegalStateException("Timer is read-only");
+        }else if (address == (textStart + text.size() + 4)) {
+            rng.write(value);
+        }else if (address == (textStart + text.size() + 5)) {
+            sys.write(value);
+        }else if (address == (textStart + text.size() + 6)) {
+            dm.write(value);
+        } else if (address <= textStart + text.size() + 7) {
+            throw new IllegalAccessException("Keyboard registers are read-only");
         } else {
             throw new IllegalAccessException("Address out of bounds");
         }

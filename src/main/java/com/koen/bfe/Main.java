@@ -17,6 +17,7 @@ import java.io.IOException;
 
 public class Main {
     public static ScreenPanel panel = new ScreenPanel();
+    public static long bootTime;
 
     public static void main(String[] args) throws IllegalAccessException, IOException, SizeLimitExceededException, InterruptedException {
         JFrame frame = new JFrame("Screen");
@@ -33,13 +34,11 @@ public class Main {
             }
         });
         System.out.println("RAM start: 0\nROM start: " + bus.getRomStart() + "\nVideo start: " + bus.getVideoStart() + "\nText start: " + bus.getTextStart());
-        System.out.println("IO registers start:" + (bus.getTextStart() + bus.getTextSize()));
-        bus.setMode(false);
+        System.out.println("IO registers start:" + (bus.getTextStart() + bus.getTextSize()) + "\nSyscontrol" + (bus.getTextStart() + bus.getTextSize() + 5));
+        bus.setMode(true);
+        bootTime = System.currentTimeMillis();
         //CPU.ExecuteProgram(FileHandling.readFileContents(args[0]));
-        System.out.println(CPU.registers[1].value);
-        System.out.println(CPU.registers[2].value);
-        System.out.println(bus.read(996));
-        bus.printf(0, "HEY, KOEN HERE, I CAN USE COMMAS NOW");
+        BImg.loadBImg("/home/koen/Documents/scripts/BFE/build/libs/BFE.bin");
     }
 }
 

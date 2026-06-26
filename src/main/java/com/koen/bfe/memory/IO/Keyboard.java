@@ -1,20 +1,20 @@
 package com.koen.bfe.memory.IO;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 public class Keyboard {
-    private byte lastKey;
-    private boolean keyAvailable = false;
+    private Queue<Byte> lastKeys = new ArrayDeque<>();
 
     public byte read() {
-        keyAvailable = false;
-        return lastKey;
+        return lastKeys.isEmpty() ? 0 : lastKeys.remove();
     }
 
     public void keyPressed(byte key) {
-        lastKey = (byte) Character.toUpperCase((char) key);
-        keyAvailable = true;
+        lastKeys.add((byte) Character.toUpperCase((char) key));
     }
 
     public byte isKeyAvailable() {
-        return (byte) (keyAvailable ? 1 : 0);
+        return (byte) (lastKeys.isEmpty() ? 0 : 1);
     }
 }
