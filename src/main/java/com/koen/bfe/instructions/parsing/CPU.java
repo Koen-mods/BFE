@@ -70,6 +70,12 @@ public class CPU {
                     Handler.handleLoadMemptrReg(PC.getValue());
                 case 18 ->
                     Handler.handleInterruptReturn(PC.getValue());
+                case 19 ->
+                    Handler.handleInterrupt(PC.getValue());
+                case 20 ->
+                    Handler.handleToggleInterrupts(PC.getValue());
+                case 21 ->
+                    Handler.handleSetInterrupt(PC.getValue());
                 case 99 ->
                     Handler.handleHalt(PC.getValue());
             }

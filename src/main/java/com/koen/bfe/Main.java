@@ -69,24 +69,28 @@ public class Main {
 * CMP_FLG
 * ___________________________________________
 * Instruction set:
-* 01: load_mem [addr] [value]
-* 02: load_reg [register name] [value]
-* 03: add [reg] [value]
-* 04: sub [reg] [value]
-* 05: jump [instruction addr]
-* 06: cmp [register] [value]
-* 07: jump_eq [instruction addr]
-* 08: jump_less [instruction addr]
-* 09: jump_more [instruction addr]
-* 10: jump_neq [instruction addr]
-* 11: jump_moreq [instruction addr]
-* 12: jump_lereq [instruction addr]
-* 13: load_reg_mem [reg] [addr]
-* 14: load_mem_reg [addr] [reg]
-* 15: load_mem_regptr [addr] [regptr]
-* 16: load_reg_memptr [reg] [addr]
-* 17: load_memptr_reg [reg] [val]
-* 99: halt
+* 01 (0x01): load_mem [addr] [value]
+* 02 (0x02): load_reg [register name] [value]
+* 03 (0x03): add [reg] [value]
+* 04 (0x04): sub [reg] [value]
+* 05 (0x05): jump [instruction addr]
+* 06 (0x06): cmp [register] [value]
+* 07 (0x07): jump_eq [instruction addr]
+* 08 (0x08): jump_less [instruction addr]
+* 09 (0x09): jump_more [instruction addr]
+* 10 (0x0A): jump_neq [instruction addr]
+* 11 (0x0B): jump_moreq [instruction addr]
+* 12 (0x0C): jump_lereq [instruction addr]
+* 13 (0x0D): load_reg_mem [reg] [addr]
+* 14 (0x0E): load_mem_reg [addr] [reg]
+* 15 (0x0F): load_mem_regptr [addr] [regptr]
+* 16 (0x10): load_reg_memptr [reg] [addr]
+* 17 (0x11): load_memptr_reg [reg] [val]
+* 18 (0x12): int_return
+* 19 (0x13): int [type]
+* 20 (0x14): toggle_int [0/1]
+* 21 (0x15): set_int [entry] [addr]
+* 99 (0x63): halt
 *
 *
 *

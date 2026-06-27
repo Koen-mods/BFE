@@ -196,6 +196,27 @@ public class Handler {
         interruptHandling.stateReturn();
     }
 
+    public static void handleInterrupt(int addr) throws IllegalAccessException {
+        interruptHandling.raiseInterrupt(bus.read(addr + 1));
+        PC.value += 2;
+    }
+
+    public static void handleToggleInterrupts(int addr) throws IllegalAccessException {
+        if (bus.read(addr + 1) < 2) {
+            INT_FLG.loadValue(bus.read(addr + 1));
+            PC.value += 2;
+        } else {
+            throw new IllegalArgumentException("Interrupt flag cannot be set higher than 1");
+        }
+    }
+
+    public static void handleSetInterrupt(int addr) throws IllegalAccessException {
+        int type = bus.read(addr + 1);
+        int vector = Helpers.BigEndian(new byte[]{bus.read(addr + 2),bus.read(addr + 3),bus.read(addr + 4),bus.read(addr + 5)});
+        interruptHandling.interruptVectorTable.set(type, vector);
+        PC.value += 6;
+    }
+
     public static void handleHalt(int addr) {
         PC.loadValue(PC.getValue() + 1);
         //System.out.println("halting CPU... (PC: " + PC.getValue() + ")");

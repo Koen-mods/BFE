@@ -2,8 +2,7 @@ package com.koen.bfe.memory;
 
 import com.koen.bfe.instructions.parsing.CPU;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.*;
 
 public class InterruptHandling {
     private final int[] interruptVectors = {
@@ -12,7 +11,19 @@ public class InterruptHandling {
             1950
     };
 
+    public List<Integer> interruptVectorTable = new ArrayList<>();
+
     public Queue<Integer> pendingInterrupts = new ArrayDeque<>();
+
+    public InterruptHandling() {
+        for (int i : interruptVectors) {
+            interruptVectorTable.add(i);
+        }
+
+        for (int i = 3; i < 256; i++) {
+            interruptVectorTable.add(1000);
+        }
+    }
 
     public void raiseInterrupt(int type) {
         //System.out.println("Interrupt raised!");
@@ -20,13 +31,14 @@ public class InterruptHandling {
     }
 
     public void handleInterrupt(int type) {
-        //System.out.println("Handling interrupt!");
+        //System.out.println("Handling interrupt! Type " + type);
         CPU.IRP.loadValue(CPU.PC.getValue());
         CPU.CRF.loadValue(CPU.CMP_FLG.getValue());
 
         CPU.INT_FLG.loadValue(2 + type);
 
-        CPU.PC.loadValue(this.interruptVectors[type]);
+        CPU.PC.loadValue(this.interruptVectorTable.get(type));
+        //System.out.println("Set PC to " + CPU.PC.getValue());
     }
 
     public void stateReturn() {
