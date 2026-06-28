@@ -90,6 +90,14 @@ public class Main {
 * 19 (0x13): int [type]
 * 20 (0x14): toggle_int [0/1]
 * 21 (0x15): set_int [entry] [addr]
+ * 22 (0x16): jumpptr [addr]
+ * 23 (0x17): cmpmem [register] [addr]
+ * 24 (0x18): jumpptr_eq [addr]
+ * 25 (0x19): jumpptr_less [addr]
+ * 26 (0x1A): jumpptr_more [addr]
+ * 27 (0x1B): jumpptr_neq [addr]
+ * 28 (0x1C): jumpptr_moreq [addr]
+ * 29 (0x1D): jumpptr_lereq [addr]
 * 99 (0x63): halt
 *
 *

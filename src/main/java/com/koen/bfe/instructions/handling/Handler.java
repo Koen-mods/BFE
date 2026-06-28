@@ -43,7 +43,8 @@ public class Handler {
     }
 
     public static void handleJmp(int addr) throws IllegalAccessException {
-        PC.value = bus.getRomStart() + bus.read(addr + 1);
+        int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+        PC.value = bus.getRomStart() + jmpAddr;
     }
 
     public static void handleCmp(int addr) throws IllegalAccessException {
@@ -61,49 +62,55 @@ public class Handler {
 
     public static void handleJmpLess(int addr) throws IllegalAccessException {
         if (CMP_FLG.value == 3) {
-            PC.value = bus.getRomStart() + bus.read(addr + 1);
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            PC.value = bus.getRomStart() + jmpAddr;
         } else {
-            PC.value += 2;
+            PC.value += 5;
         }
     }
 
     public static void handleJmpEq(int addr) throws IllegalAccessException {
         if (CMP_FLG.value == 1) {
-            PC.value = bus.getRomStart() + bus.read(addr + 1);
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            PC.value = bus.getRomStart() + jmpAddr;
         } else {
-            PC.value += 2;
+            PC.value += 5;
         }
     }
 
     public static void handleJmpNeq(int addr) throws IllegalAccessException {
         if (CMP_FLG.value != 1) {
-            PC.value = bus.getRomStart() + bus.read(addr + 1);
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            PC.value = bus.getRomStart() + jmpAddr;
         } else {
-            PC.value += 2;
+            PC.value += 5;
         }
     }
 
     public static void handleJmpMore(int addr) throws IllegalAccessException {
         if (CMP_FLG.value == 2) {
-            PC.value = bus.getRomStart() + bus.read(addr + 1);
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            PC.value = bus.getRomStart() + jmpAddr;
         } else {
-            PC.value += 2;
+            PC.value += 5;
         }
     }
 
     public static void handleJmpLereq(int addr) throws IllegalAccessException {
         if (CMP_FLG.value == 3 || CMP_FLG.value == 1) {
-            PC.value = bus.getRomStart() + bus.read(addr + 1);
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            PC.value = bus.getRomStart() + jmpAddr;
         } else {
-            PC.value += 2;
+            PC.value += 5;
         }
     }
 
     public static void handleJmpMoreq(int addr) throws IllegalAccessException {
         if (CMP_FLG.value == 2 || CMP_FLG.value == 1) {
-            PC.value = bus.getRomStart() + bus.read(addr + 1);
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            PC.value = bus.getRomStart() + jmpAddr;
         } else {
-            PC.value += 2;
+            PC.value += 5;
         }
     }
 
@@ -215,6 +222,86 @@ public class Handler {
         int vector = Helpers.BigEndian(new byte[]{bus.read(addr + 2),bus.read(addr + 3),bus.read(addr + 4),bus.read(addr + 5)});
         interruptHandling.interruptVectorTable.set(type, vector);
         PC.value += 6;
+    }
+
+    public static void handleJmpPtr(int addr) throws IllegalAccessException {
+        int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+        int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+        PC.value = bus.getRomStart() + jmpAddr;
+    }
+
+    public static void handleCmpMem(int addr) throws IllegalAccessException {
+        int ldAddr = Helpers.BigEndian(new byte[]{bus.read(addr + 2), bus.read(addr + 3), bus.read(addr + 4), bus.read(addr + 5)});
+        int CmpVal = Helpers.BigEndian(new byte[]{bus.read(ldAddr), bus.read(ldAddr+1), bus.read(ldAddr+2),bus.read(ldAddr+3)});
+        if (registers[bus.read(addr+1)].getValue() == CmpVal) {
+            CMP_FLG.value = 1;
+        }if (registers[bus.read(addr+1)].getValue() > CmpVal) {
+            CMP_FLG.value = 2;
+        }if (registers[bus.read(addr+1)].getValue() < CmpVal) {
+            CMP_FLG.value = 3;
+        }
+
+        PC.value += 6;
+    }
+
+    public static void handleJmpPtrLess(int addr) throws IllegalAccessException {
+        if (CMP_FLG.value == 3) {
+            int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+            PC.value = bus.getRomStart() + jmpAddr;
+        } else {
+            PC.value += 5;
+        }
+    }
+
+    public static void handleJmpPtrEq(int addr) throws IllegalAccessException {
+        if (CMP_FLG.value == 1) {
+            int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+            PC.value = bus.getRomStart() + jmpAddr;
+        } else {
+            PC.value += 5;
+        }
+    }
+
+    public static void handleJmpPtrNeq(int addr) throws IllegalAccessException {
+        if (CMP_FLG.value != 1) {
+            int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+            PC.value = bus.getRomStart() + jmpAddr;
+        } else {
+            PC.value += 5;
+        }
+    }
+
+    public static void handleJmpPtrMore(int addr) throws IllegalAccessException {
+        if (CMP_FLG.value == 2) {
+            int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+            PC.value = bus.getRomStart() + jmpAddr;
+        } else {
+            PC.value += 5;
+        }
+    }
+
+    public static void handleJmpPtrLereq(int addr) throws IllegalAccessException {
+        if (CMP_FLG.value == 3 || CMP_FLG.value == 1) {
+            int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+            PC.value = bus.getRomStart() + jmpAddr;
+        } else {
+            PC.value += 5;
+        }
+    }
+
+    public static void handleJmpPtrMoreq(int addr) throws IllegalAccessException {
+        if (CMP_FLG.value == 2 || CMP_FLG.value == 1) {
+            int ptrAddr = Helpers.BigEndian(new byte[]{bus.read(addr+1),bus.read(addr+2),bus.read(addr+3),bus.read(addr+4)});
+            int jmpAddr = Helpers.BigEndian(new byte[]{bus.read(ptrAddr),bus.read(ptrAddr+1),bus.read(addr+2),bus.read(addr+3)});
+            PC.value = bus.getRomStart() + jmpAddr;
+        } else {
+            PC.value += 5;
+        }
     }
 
     public static void handleHalt(int addr) {

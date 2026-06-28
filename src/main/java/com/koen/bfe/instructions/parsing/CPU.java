@@ -76,6 +76,22 @@ public class CPU {
                     Handler.handleToggleInterrupts(PC.getValue());
                 case 21 ->
                     Handler.handleSetInterrupt(PC.getValue());
+                case 22 ->
+                    Handler.handleJmpPtr(PC.getValue());
+                case 23 ->
+                    Handler.handleCmpMem(PC.getValue());
+                case 24 ->
+                    Handler.handleJmpPtrEq(PC.getValue());
+                case 25 ->
+                    Handler.handleJmpPtrLess(PC.getValue());
+                case 26 ->
+                    Handler.handleJmpPtrMore(PC.getValue());
+                case 27 ->
+                    Handler.handleJmpPtrNeq(PC.getValue());
+                case 28 ->
+                    Handler.handleJmpPtrMoreq(PC.getValue());
+                case 29 ->
+                    Handler.handleJmpPtrLereq(PC.getValue());
                 case 99 ->
                     Handler.handleHalt(PC.getValue());
             }
