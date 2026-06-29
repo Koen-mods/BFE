@@ -2,6 +2,7 @@ package com.koen.bfe;
 
 import com.koen.bfe.essentials.Helpers;
 import com.koen.bfe.essentials.input.FileHandling;
+import com.koen.bfe.help.clifunctions.DashHelp;
 import com.koen.bfe.help.menu.Menu;
 import com.koen.bfe.instructions.handling.Handler;
 import com.koen.bfe.instructions.parsing.CPU;
@@ -19,28 +20,43 @@ public class Main {
     public static ScreenPanel panel = new ScreenPanel();
     public static long bootTime;
 
+    private static final String version = "1.0-SNAPSHOT";
+
     public static void main(String[] args) throws IllegalAccessException, IOException, SizeLimitExceededException, InterruptedException {
-        JFrame frame = new JFrame("Screen");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(panel);
-        frame.pack();
-        frame.setVisible(true);
-        CPU cpu = new CPU();
-        Bus bus = CPU.getBus();
-        frame.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                bus.keyboard.keyPressed((byte)e.getKeyChar());
+        switch (args[0]) {
+            case "-e", "--execute" -> {
+                JFrame frame = new JFrame("Screen");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.add(panel);
+                frame.pack();
+                frame.setVisible(true);
+                CPU cpu = new CPU();
+                Bus bus = CPU.getBus();
+                frame.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyPressed(KeyEvent e) {
+                        bus.keyboard.keyPressed((byte)e.getKeyChar());
+                    }
+                });
+                //System.out.println("RAM start: 0\nROM start: " + bus.getRomStart() + "\nVideo start: " + bus.getVideoStart() + "\nText start: " + bus.getTextStart());
+                //System.out.println("IO registers start:" + (bus.getTextStart() + bus.getTextSize()) + "\nSyscontrol" + (bus.getTextStart() + bus.getTextSize() + 5));
+                bus.setMode(true);
+                bootTime = System.currentTimeMillis();
+                CPU.ExecuteProgram(FileHandling.readFileContents(args[1]));
+                frame.setVisible(false);
+                frame.remove(panel);
+                System.exit(0);
             }
-        });
-        System.out.println("RAM start: 0\nROM start: " + bus.getRomStart() + "\nVideo start: " + bus.getVideoStart() + "\nText start: " + bus.getTextStart());
-        System.out.println("IO registers start:" + (bus.getTextStart() + bus.getTextSize()) + "\nSyscontrol" + (bus.getTextStart() + bus.getTextSize() + 5));
-        bus.setMode(true);
-        bootTime = System.currentTimeMillis();
-        CPU.ExecuteProgram(FileHandling.readFileContents(args[0]));
-        frame.setVisible(false);
-        frame.remove(panel);
-        System.exit(0);
+            case "-v", "--version" -> {
+                System.out.println("Befinner Friendly Emulator " + version);
+            }
+            case "-h", "--help" -> {
+                DashHelp.Help();
+            }
+            case "-m", "--menu" -> {
+                Menu.start();
+            }
+        }
     }
 }
 
@@ -67,6 +83,9 @@ public class Main {
 * R_16
 * PC
 * CMP_FLG
+* INT_FLG
+* IRP
+* CRF
 * ___________________________________________
 * Instruction set:
 * 01 (0x01): load_mem [addr] [value]
